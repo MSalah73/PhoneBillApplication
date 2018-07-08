@@ -28,7 +28,7 @@ class ArgumentsValidator {
    * This function checks the order of the arguments.
    * @param args
    * Arguments pass from the command line
-   * @return true if all matches the regex. Otherwise return false
+   * @return true if all matches the regex. Otherwise return false.
    */
   final boolean validateOrder(final String[] args) {
     var length = args.length;   boolean correctOrder;
