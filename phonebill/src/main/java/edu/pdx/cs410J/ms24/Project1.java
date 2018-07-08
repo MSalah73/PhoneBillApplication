@@ -45,7 +45,7 @@ public class Project1 {
             "callee phone number, start date and time of the call and the end date and time of the call.\n" +
             "\n" +
             "Usage:\n" +
-            "Project1 [Option] Arguments\n" +
+            "Project1 [Option] <Arguments>\n" +
             "\n" +
             "Arguments must be in the following order and format:\n" +
             "Name --> if contains spaces use quotes \"Name With Spaces\"\n" +
@@ -54,7 +54,7 @@ public class Project1 {
             "Start Date and Time --> XX/XX/XXXX XX:XX\n" +
             "End Date and Time --> XX/XX/XXXX XX:XX\n" +
             "\n" +
-            "Options:\n" +
+            "Options are in any order:\n" +
             "-print Prints phone call information\n" +
             "-README Prints the README Information");
             System.exit(0);
