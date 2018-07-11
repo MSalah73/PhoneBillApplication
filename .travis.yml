@@ -1,5 +1,0 @@
-language: java
-jdk:
-    - oraclejdk10
-sudo: false
-script: "mvn install"
