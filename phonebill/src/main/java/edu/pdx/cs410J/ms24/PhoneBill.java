@@ -2,6 +2,7 @@ package edu.pdx.cs410J.ms24;
 
 import edu.pdx.cs410J.AbstractPhoneBill;
 
+import java.security.InvalidParameterException;
 import java.util.HashSet;
 import java.util.Collection;
 
@@ -11,6 +12,15 @@ import java.util.Collection;
  * @author Zack Salah
  */
 public class PhoneBill extends AbstractPhoneBill<PhoneCall> {
+
+  /**
+   * Notifies the caller that the PhoneBill object is empty.
+   * @return true on empty PhoneBill, otherwise false.
+   */
+  public boolean isEmpty(){
+    return (customer == null || customer.isEmpty()) && phoneCalls.isEmpty();
+  };
+
   /**
    * Create a empty <code>PhoneBill</code>.
    */
@@ -44,6 +54,19 @@ public class PhoneBill extends AbstractPhoneBill<PhoneCall> {
   }
 
   /**
+   * Creates a new <code>PhoneBill</code> from array of <code>PhoneBill</code>s.
+   * @param name
+   * The name of customer
+   * @param bills
+   * array of <code>PhoneBill</code> objects.
+   */
+  PhoneBill(final String name, PhoneBill... bills){
+    super();
+    customer = name;
+    copyPhoneBills(bills);
+  }
+
+  /**
    * Gets the customer's name by returning stored name.
    * @return customer's name as <code>String</code>
    */
@@ -73,6 +96,22 @@ public class PhoneBill extends AbstractPhoneBill<PhoneCall> {
     return phoneCalls;
   }
 
+  /**
+   * This function copy the <code>PhoneCall</code>s in each <code>PhoneBill</code>s
+   * into one <code>PhoneBill</code> object.
+   * All the bill must have the same's customer's name.
+   * @param bills
+   * an array of <code>PhoneBill</code>s
+   */
+  private void copyPhoneBills(PhoneBill... bills){
+    for(var bill : bills){
+      if(bill != null && customer.equals(bill.customer)) {
+        phoneCalls.addAll(bill.getPhoneCalls());
+      } else{
+        throw new InvalidParameterException("PhoneBills does not contain the same customer");
+      }
+    }
+  }
   /**
    * This <code>String</code> is a representation of the customer's name.
    */

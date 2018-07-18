@@ -104,19 +104,52 @@ public class ArgumentsValidatorTest {
    */
   @Test
   public void parserReadmeOption(){
-    validator.validateOption("-README");
+    validator.validateOptions(new String[]{"-README"},1);
   }
   @Test
   public void parserPrintOption(){
-    validator.validateOption("-print");
+    validator.validateOptions(new String[]{"-print"},1);
+  }
+  @Test(expected = IllegalArgumentException.class)
+  public void parserTextFileOptionWithNullArgs(){
+    validator.validateOptions(new String[]{"-textFile"}, 1);
+  }
+  @Test
+  public void parserTextFileOption(){
+    validator.validateOptions(new String[]{"-textFile", "lolalalla"},2);
+  }
+  @Test
+  public void testTextFileOptionInTheMiddle(){
+    validator.checkArgumentsValidity(new String[]{"-print","-textFile","balba","-README","NONE","000-000-0000","999-999-9999",
+        "1/1/2222", "1:11","1/1/2222", "1:11"});
+  }
+  @Test
+  public void testTextFileOptionInTheBeginning(){
+    validator.checkArgumentsValidity(new String[]{"-textFile","balba","-README","NONE","000-000-0000","999-999-9999",
+        "1/1/2222", "1:11","1/1/2222", "1:11"});
+  }
+  @Test
+  public void testOnlyTextFileOption(){
+    validator.checkArgumentsValidity(new String[]{"-textFile","balba","NONE","000-000-0000","999-999-9999",
+        "1/1/2222", "1:11","1/1/2222", "1:11"});
+  }
+  @Test(expected = IllegalArgumentException.class)
+  public void testStructureOfTextFileWithOtherOptions(){
+    validator.checkArgumentsValidity(new String[]{"-print","balba","NONE","000-000-0000","999-999-9999",
+        "1/1/2222", "1:11","1/1/2222", "1:11"});
+  }
+  @Test(expected = IllegalArgumentException.class)
+  public void testTextFileOptionWithNoFileName(){
+    validator.checkArgumentsValidity(new String[]{"-textFile","NONE","000-000-0000","999-999-9999",
+        "1/1/2222", "1:11","1/1/2222", "1:11"});
   }
   @Test(expected = IllegalArgumentException.class)
   public void optionWithoutHyphen(){
-    validator.validateOption("print");
+    validator.validateOptions(new String[]{"print"}, 1);
   }
   @Test(expected = IllegalArgumentException.class)
   public void nonExistentOption(){
-    validator.validateOption("-nonExistentOption");
+    validator.validateOptions(new String[]{"-nonExistentOption"}, 1);
   }
   /*
    * validateOption
@@ -128,7 +161,7 @@ public class ArgumentsValidatorTest {
   @Test
   public void checkOrderOfArgs(){
     assertThat("Args from command line not ordered correctly",
-        validator.validateOrder(new String[]{"zack", "99-","99","////", "1:","////", "1:"}));
+        validator.validateOrder(new String[]{"zack", "99--","9-9-","///", "1:","///", "1:"}));
   }
   @Test
   public void testListoOfInvalidOrderOfArgs(){
@@ -148,21 +181,21 @@ public class ArgumentsValidatorTest {
    */
   @Test
   public void testIfArgsValidityValidateCorrectly(){
-    validator.chackArgumentsValidity(new String[]{"-print","-README","NONE","000-000-0000","999-999-9999",
+    validator.checkArgumentsValidity(new String[]{"-print","-README","NONE","000-000-0000","999-999-9999",
         "1/1/2222", "1:11","1/1/2222", "1:11"});
   }
   @Test(expected = IllegalArgumentException.class)
   public void argsWithPhoneNumbersFormattedWrongly(){
-    validator.chackArgumentsValidity(new String[]{"-print","-README","NONE","00-000-0000","999-999-9999",
+    validator.checkArgumentsValidity(new String[]{"-print","-README","NONE","00-000-0000","999-999-9999",
         "1/1/2222", "1:11","1/1/2222", "1:11"});
-    validator.chackArgumentsValidity(new String[]{"-print","-README","NONE","000-000-0000","999-99-9999",
+    validator.checkArgumentsValidity(new String[]{"-print","-README","NONE","000-000-0000","999-99-9999",
         "1/1/2222", "1:11","1/1/2222", "1:11"});
   }
   @Test(expected = IllegalArgumentException.class)
   public void argsWithDateAndTimeFormattedWrongly(){
-    validator.chackArgumentsValidity(new String[]{"-print","-README","NONE","00-000-0000","999-999-9999",
+    validator.checkArgumentsValidity(new String[]{"-print","-README","NONE","00-000-0000","999-999-9999",
         "1/1/222", "1:11","1/1/2222", "1:11"});
-    validator.chackArgumentsValidity(new String[]{"-print","-README","NONE","000-000-0000","999-99-9999",
+    validator.checkArgumentsValidity(new String[]{"-print","-README","NONE","000-000-0000","999-99-9999",
         "1/1/2222", "24:11","1/1/2222", "1:11"});
   }
   /*

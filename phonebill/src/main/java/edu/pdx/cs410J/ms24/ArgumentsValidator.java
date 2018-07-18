@@ -1,4 +1,7 @@
 package edu.pdx.cs410J.ms24;
+
+import java.util.Arrays;
+
 /**
  * This class Validate the Arguments passed from the command line.
  *
@@ -21,7 +24,7 @@ class ArgumentsValidator {
    * return false. if checkArgumentValidator is false it throw an exception.
    */
   final boolean argumentsValidator(final String[] args) {
-    return validateOrder(args) && chackArgumentsValidity(args);
+    return validateOrder(args) && checkArgumentsValidity(args);
   }
 
   /**
@@ -32,9 +35,9 @@ class ArgumentsValidator {
    */
   final boolean validateOrder(final String[] args) {
     var length = args.length;   boolean correctOrder;
-    correctOrder = args[--length].matches("^[\\d:]+?$") && args[--length].matches("^[\\d/]+?$");
-    correctOrder = correctOrder && args[--length].matches("^[\\d:]+?$") && args[--length].matches("^[\\d/]+?$");
-    correctOrder = correctOrder && args[--length].matches("^[\\d-]+?$") && args[--length].matches("^[\\d-]+?$");
+    correctOrder = args[--length].matches("^.*?:.*?$") && args[--length].matches("^(.*?/){2}.*?$");
+    correctOrder = correctOrder && args[--length].matches("^.*?:.*?$") && args[--length].matches("^(.*?/){2}.*?$");
+    correctOrder = correctOrder && args[--length].matches("^(.*?-){2}.*?$") && args[--length].matches("^(.*?-){2}.*?$");
     correctOrder = correctOrder && args[--length].matches("^[^-].*?$");
     return correctOrder;
   }
@@ -45,33 +48,46 @@ class ArgumentsValidator {
    * Arguments pass from the command line
    * @return True if all functions return true. Otherwise it throw an exception
    */
-  final boolean chackArgumentsValidity(final String[] args) {
+  final boolean checkArgumentsValidity(final String[] args) {
     int customerArgsEndIndex = args.length;     boolean correctOrder;
     correctOrder = validateTime(args[--customerArgsEndIndex]) && validateDate(args[--customerArgsEndIndex]);
     correctOrder = correctOrder && validateTime(args[--customerArgsEndIndex]) && validateDate(args[--customerArgsEndIndex]);
     correctOrder = correctOrder && validatePhoneNumber(args[--customerArgsEndIndex]) && validatePhoneNumber(args[--customerArgsEndIndex]);
     --customerArgsEndIndex;
     if(customerArgsEndIndex > 0)
-      for (--customerArgsEndIndex; customerArgsEndIndex > -1; --customerArgsEndIndex)
-        correctOrder = validateOption((args[customerArgsEndIndex]));
+      correctOrder = validateOptions(args, customerArgsEndIndex);
 
     return correctOrder;
   }
 
   /**
-  * Check is passed option from the arguments is valid.
-  * @param option
-  * Option begins with - from the command arguments
+  * check if the arguments has valid options.
+  * @param args
+  * Arguments from the command line.
+  * @param customerArgsEndIndex
+  * The number of options in the arguments.
   * @return True if matches the regex.
   * @throws IllegalArgumentException if passed in option does not match regex.
   */
-  final boolean validateOption(final String option){
-    if(option.matches("^-(print|README)$"))
-      return true;
-    throw new IllegalArgumentException("Option must be either -print or -README in" +
-        " any order before customer's information e.g [Option] <args>");
+  final boolean validateOptions(final String[] args, int customerArgsEndIndex){
+    var isValid = false;
+    for (--customerArgsEndIndex; customerArgsEndIndex > -1; --customerArgsEndIndex) {
+      var option = args[customerArgsEndIndex];
+      if (option.matches("^-(print|README)$") &&
+          (customerArgsEndIndex > 0? !args[customerArgsEndIndex-1].matches("^-textFile$"):true)) {
+        isValid = true;
+      } else if (option.matches("^-textFile$") && args.length == 8) {
+        throw new IllegalArgumentException("-textFile option is missing a file name.");
+      } else if (customerArgsEndIndex > 0 && args[customerArgsEndIndex - 1].matches("^-(textFile)$")) {
+        isValid = true;
+        --customerArgsEndIndex;
+      } else
+        throw new IllegalArgumentException(
+            "Option must be either -print, -README or -textFile filename in" +
+                " any order before customer's information e.g [Option] <args>");
+    }
+    return isValid;
   }
-
   /**
   * Checks if the passed in phone number is valid.
   * @param phoneNumber
