@@ -63,6 +63,6 @@ public class FileAndDirectoryGenerator {
     } else if (fileName.matches("^.+?\\..*?") && !fileName.matches("^.+?\\.txt")) {
       throw new InvalidParameterException("File must only have .txt extension");
     }
-    return directory + "\\" + (fileName.matches("^.+?\\.txt$") ? fileName : fileName + ".txt");
+    return directory + "/" + (fileName.matches("^.+?\\.txt$") ? fileName : fileName + ".txt");
   }
 }
