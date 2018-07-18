@@ -1,8 +1,5 @@
 language: java
 jdk:
     - oraclejdk10
-branches:
-  only:
-  - master
 sudo: false
 script: "mvn install"
