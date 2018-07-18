@@ -32,7 +32,7 @@ public class FileAndDirectoryGenerator {
    */
   public void createDirectoryAndFile(final String path) throws IOException {
     File file = new File(path);
-    var directory = Arrays.asList(path.split("\\\\"+file.getName()));
+    var directory = Arrays.asList(path.split("/"+file.getName()));
     File mkdir = new File(directory.get(0));
     mkdir.getName();
     if (!mkdir.exists())
