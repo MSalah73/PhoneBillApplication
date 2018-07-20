@@ -135,56 +135,56 @@ public class Project2IT extends InvokeMainTestCase {
     MainMethodResult result = invokeMain("Zack","999-999-9229","000-000-0000","11/11/111","11:11","11/11/1111","11:11");
     assertThat(result.getExitCode(), equalTo(1));
     assertThat(result.getTextWrittenToStandardError(),
-        containsString("XX/XX/XXXX"));
+        containsString("MM/DD/YYYY"));
   }
   @Test
   public void dateWrongFormatLessThenActual2(){
     MainMethodResult result = invokeMain("Zack","999-229-9229","000-000-0000","11//1111","11:11","11/11/1111","11:11");
     assertThat(result.getExitCode(), equalTo(1));
     assertThat(result.getTextWrittenToStandardError(),
-        containsString("XX/XX/XXXX"));
+        containsString("MM/DD/YYYY"));
   }
   @Test
   public void dateWrongFormatMoreThenActual(){
     MainMethodResult result = invokeMain("Zack","999-911-9229","000-000-0030","11/1331/1111","11:11","11/11/1111","11:11");
     assertThat(result.getExitCode(), equalTo(1));
     assertThat(result.getTextWrittenToStandardError(),
-        containsString("XX/XX/XXXX"));
+        containsString("MM/DD/YYYY"));
   }
   @Test
   public void dateWrongFormatMoreThenActual2(){
     MainMethodResult result = invokeMain("Zack","999-911-9229","000-000-0000","11/11/1133311","11:11","11/11/1111","11:11");
     assertThat(result.getExitCode(), equalTo(1));
     assertThat(result.getTextWrittenToStandardError(),
-        containsString("XX/XX/XXXX"));
+        containsString("MM/DD/YYYY"));
   }
   @Test
   public void timeWrongFormatLessThenActual(){
     MainMethodResult result = invokeMain("Zack","999-999-9229","000-000-0000","11/11/1121","0:11","11/11/1111","11:11");
     assertThat(result.getExitCode(), equalTo(1));
     assertThat(result.getTextWrittenToStandardError(),
-        containsString("XX:XX"));
+        containsString("HH:MM"));
   }
   @Test
   public void timeWrongFormatLessThenActual2(){
     MainMethodResult result = invokeMain("Zack","999-229-9229","000-000-0000","11/22/1111","11:1","11/11/1111","11:11");
     assertThat(result.getExitCode(), equalTo(1));
     assertThat(result.getTextWrittenToStandardError(),
-        containsString("XX:XX"));
+        containsString("HH:MM"));
   }
   @Test
   public void timeWrongFormatMoreThenActual(){
     MainMethodResult result = invokeMain("Zack","999-911-9229","000-000-0030","11/11/1111","121:11","11/11/1111","11:11");
     assertThat(result.getExitCode(), equalTo(1));
     assertThat(result.getTextWrittenToStandardError(),
-        containsString("XX:XX"));
+        containsString("HH:MM"));
   }
   @Test
   public void timeWrongFormatMoreThenActual2(){
     MainMethodResult result = invokeMain("Zack","999-911-9229","000-000-0000","11/11/1111","11:121","11/11/1111","11:11");
     assertThat(result.getExitCode(), equalTo(1));
     assertThat(result.getTextWrittenToStandardError(),
-        containsString("XX:XX"));
+        containsString("HH:MM"));
   }
   @Test
   public void readmeOption() {
