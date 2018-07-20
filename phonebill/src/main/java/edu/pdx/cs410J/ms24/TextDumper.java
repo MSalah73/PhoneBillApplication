@@ -26,7 +26,7 @@ public class TextDumper implements PhoneBillDumper<PhoneBill> {
   TextDumper(final String file) throws IOException {
     super();
     var fileAndDirectoryGenerator = new FileAndDirectoryGenerator();
-    path = new String(fileAndDirectoryGenerator.pathGenetaror(file,directory));
+    path = new String(fileAndDirectoryGenerator.pathValidator(file));
     fileAndDirectoryGenerator.createDirectoryAndFile(path);
   }
 
@@ -82,6 +82,7 @@ public class TextDumper implements PhoneBillDumper<PhoneBill> {
   /**
    * Preset directory to place the customer's files
    */
+  @Deprecated
   private final String directory = "CustomerPhoneBillFiles";
   /**
    * The Path in which a customer file resides

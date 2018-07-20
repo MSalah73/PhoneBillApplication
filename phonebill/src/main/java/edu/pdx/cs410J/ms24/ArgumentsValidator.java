@@ -98,7 +98,7 @@ class ArgumentsValidator {
   final boolean validatePhoneNumber(final String phoneNumber){
     if(phoneNumber.matches(phoneFormat))
       return true;
-    throw new IllegalArgumentException("Phone number must in this format XXX-XXX-XXXX");
+    throw new IllegalArgumentException("Phone number must in this format XXX-XXX-XXXX where X represent a number from 0 to 9");
   }
 
   /**
@@ -111,8 +111,8 @@ class ArgumentsValidator {
   final boolean validateTime(final String time){
     if(time.matches(timeFormat))
       return true;
-    throw new IllegalArgumentException("Time must be in this format XX:XX where the first" +
-        " XX is between 00 to 23 and the second XX is between 00 to 59");
+    throw new IllegalArgumentException("Time must be in this format HH:MM where" +
+        " HH is between 00 to 23 and MM is between 00 to 59");
   }
 
   /**
@@ -125,7 +125,13 @@ class ArgumentsValidator {
   final boolean validateDate(final String date){
     if(date.matches(dateFormat))
       return true;
-    throw new IllegalArgumentException("Date must be in this format XX/XX/XXXX");
+    throw new IllegalArgumentException("Date must be in this format MM/DD/YYYY - M,D, and Y represent a number."
+        + "\nY -> 0 to 9"
+        + "\nM -> 1 to 12"
+        + "\nD: \n"
+        + "Month 2 -> days must be from 1 to 28\n"
+        + "Months 1, 3, 5, 7, 8, 10, and 12 -> days must be from 1 to 31\n"
+        + "Months 4, 6, 9, and 11 -> days must be from 1 to 30");
   }
 
   /**

@@ -7,7 +7,7 @@ import edu.pdx.cs410J.AbstractPhoneCall;
  * @author Zack Salah
  */
 
-public class PhoneCall extends AbstractPhoneCall {
+public class PhoneCall extends AbstractPhoneCall implements Comparable<PhoneCall>{
   /**
    * Creates an empty <code>PhoneCall</Code> Object.
    */
@@ -92,4 +92,9 @@ public class PhoneCall extends AbstractPhoneCall {
    * The end date and time for the phone call.
    */
   private String endTime;
+
+  @Override
+  public int compareTo(PhoneCall o) {
+    return 0;
+  }
 }

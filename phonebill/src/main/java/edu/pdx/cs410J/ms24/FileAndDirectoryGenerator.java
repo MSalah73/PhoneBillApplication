@@ -32,10 +32,12 @@ public class FileAndDirectoryGenerator {
    */
   public void createDirectoryAndFile(final String path) throws IOException {
     File file = new File(path);
-    var directory = Arrays.asList(path.split("/"+file.getName()));
-    File mkdir = new File(directory.get(0));
-    mkdir.getName();
-    if (!mkdir.exists())
+    File mkdir = null;
+    if(path.contains("/")) {
+      var directory = Arrays.asList(path.split("/" + file.getName()));
+      mkdir = new File(directory.get(0));
+    }
+    if (mkdir != null && !mkdir.exists())
       mkdir.mkdirs();
     if (!file.exists())
       file.createNewFile();
@@ -48,21 +50,19 @@ public class FileAndDirectoryGenerator {
    * Generate the path with passed in file name and directory.
    * @param fileName
    * The name of the file. It can be with .txt or without the extension.
-   * @param directory
-   * to which directory the file shall be stored.
    * @return path
    * concatenate with the right format and return it
    * @throws InvalidParameterException
    * If the passed in file names contains extensions other than .txt
    * or if its empty
    */
-  public final String pathGenetaror(final String fileName, final String directory)
+  public final String pathValidator(final String fileName)
       throws IOException {
     if (fileName == null || fileName.isEmpty()) {
       throw new InvalidParameterException("File name can not be empty");
     } else if (fileName.matches("^.+?\\..*?") && !fileName.matches("^.+?\\.txt")) {
       throw new InvalidParameterException("File must only have .txt extension");
     }
-    return directory + "/" + (fileName.matches("^.+?\\.txt$") ? fileName : fileName + ".txt");
+    return (fileName.matches("^.+?\\.txt$") ? fileName : fileName + ".txt");
   }
 }

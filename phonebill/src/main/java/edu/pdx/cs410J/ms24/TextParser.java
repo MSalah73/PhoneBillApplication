@@ -26,7 +26,7 @@ public class TextParser implements PhoneBillParser<PhoneBill> {
   TextParser(final String file) throws IOException {
     super();
     var fileAndDirectoryGenerator = new FileAndDirectoryGenerator();
-    path = new String(fileAndDirectoryGenerator.pathGenetaror(file,directory));
+    path = new String(fileAndDirectoryGenerator.pathValidator(file));
   }
 
   /**
@@ -79,7 +79,7 @@ public class TextParser implements PhoneBillParser<PhoneBill> {
    * @throws IOException
    * For any reading error.
    */
-  public final List readFile() throws IOException{
+  private final List readFile() throws IOException{
     File file = new File(path);
     BufferedReader read = null;
     List<String> listOfReadLines = new ArrayList<>();
@@ -99,6 +99,7 @@ public class TextParser implements PhoneBillParser<PhoneBill> {
   /**
    * Preset directory to place the customer's files
    */
+  @Deprecated
   private final String directory = "CustomerPhoneBillFiles";
   /**
    * The Path in which a customer file resides
