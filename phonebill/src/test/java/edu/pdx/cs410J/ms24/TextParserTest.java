@@ -8,11 +8,11 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.Collection;
 import org.junit.Test;
-
+@Deprecated
 public class TextParserTest {
   @Test
   public void phoneBillParserStoreNameInPhoneBillObject() throws IOException, ParserException {
-    BufferedReader bufferedReader = new BufferedReader(new FileReader("CustomerPhoneBillFiles/Test.txt"));
+    BufferedReader bufferedReader = new BufferedReader(new FileReader("Test.txt"));
     String Name = bufferedReader.readLine();
     TextParser textParser = new TextParser("Test");
     PhoneBill phoneBill = textParser.parse();
