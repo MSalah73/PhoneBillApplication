@@ -103,21 +103,22 @@ public class SubmissionTestIT extends InvokeMainTestCase {
   }
   @Test
   public void prettyprint() {
-    MainMethodResult result = invokeMain("-pretty","-","-textFile","ms24/ms24.txt","-print", "Test7","123-456-7890", "234-567-8901",
+    MainMethodResult result = invokeMain("-pretty","-","-textFile","ms24/onePhoneBill.txt","-print", "Test7","123-456-7890", "234-567-8901",
         "01/07/2018", "07:00","am", "01/17/2018", "5:00", "pm");
+    System.out.println(result.getTextWrittenToStandardError());
     assertThat(result.getExitCode(), equalTo(0));
     System.out.println(result.getTextWrittenToStandardOut());
   }
   @Test
   public void prettyprint3() {
-    MainMethodResult result = invokeMain("-textFile","ms24/ms24.txt","-print","-pretty","-", "Test7","123-456-7890", "234-567-8901",
+    MainMethodResult result = invokeMain("-textFile","ms24/onePhoneBill.txt","-print","-pretty","-", "Test7","123-456-7890", "234-567-8901",
         "01/07/2018", "07:00","am", "01/17/2018", "5:00", "pm");
     assertThat(result.getExitCode(), equalTo(0));
     System.out.println(result.getTextWrittenToStandardOut());
   }
   @Test
   public void prettyprintFile() {
-    MainMethodResult result = invokeMain("-textFile","ms24/ms24.txt","-print","-pretty","pretty", "Test7","123-456-7890", "234-567-8901",
+    MainMethodResult result = invokeMain("-textFile","ms24/onePhoneBill.txt","-print","-pretty","pretty", "Test7","123-456-7890", "234-567-8901",
         "01/07/2018", "07:00","am", "01/17/2018", "5:00", "pm");
     assertThat(result.getExitCode(), equalTo(0));
     System.out.println(result.getTextWrittenToStandardOut());
