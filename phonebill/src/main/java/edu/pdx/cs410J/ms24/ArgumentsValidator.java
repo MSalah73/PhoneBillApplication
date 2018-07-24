@@ -1,7 +1,5 @@
 package edu.pdx.cs410J.ms24;
 
-import java.util.Arrays;
-
 /**
  * This class Validate the Arguments passed from the command line.
  *
@@ -24,7 +22,7 @@ class ArgumentsValidator {
    * return false. if checkArgumentValidator is false it throw an exception.
    */
   final boolean argumentsValidator(final String[] args) {
-    return validateOrder(args) && checkArgumentsValidity(args);
+    return checkArgumentsValidity(args);
   }
 
   /**
@@ -33,6 +31,7 @@ class ArgumentsValidator {
    * Arguments pass from the command line.
    * @return true if all matches the regex. Otherwise return false
    */
+  @Deprecated
   final boolean validateOrder(final String[] args) {
     var length = args.length;   boolean correctOrder;
     correctOrder = args[--length].matches("^.*?:.*?$") && args[--length].matches("^(.*?/){2}.*?$");
@@ -50,7 +49,9 @@ class ArgumentsValidator {
    */
   final boolean checkArgumentsValidity(final String[] args) {
     int customerArgsEndIndex = args.length;     boolean correctOrder;
-    correctOrder = validateTime(args[--customerArgsEndIndex]) && validateDate(args[--customerArgsEndIndex]);
+    correctOrder = validatePM_AM(args[--customerArgsEndIndex]);
+    correctOrder = correctOrder && validateTime(args[--customerArgsEndIndex]) && validateDate(args[--customerArgsEndIndex]);
+    correctOrder = correctOrder && validatePM_AM(args[--customerArgsEndIndex]);
     correctOrder = correctOrder && validateTime(args[--customerArgsEndIndex]) && validateDate(args[--customerArgsEndIndex]);
     correctOrder = correctOrder && validatePhoneNumber(args[--customerArgsEndIndex]) && validatePhoneNumber(args[--customerArgsEndIndex]);
     --customerArgsEndIndex;
@@ -74,16 +75,16 @@ class ArgumentsValidator {
     for (--customerArgsEndIndex; customerArgsEndIndex > -1; --customerArgsEndIndex) {
       var option = args[customerArgsEndIndex];
       if (option.matches("^-(print|README)$") &&
-          (customerArgsEndIndex > 0? !args[customerArgsEndIndex-1].matches("^-textFile$"):true)) {
+          (customerArgsEndIndex > 0? !args[customerArgsEndIndex-1].matches("^-(textFile|pretty)$"):true)) {
         isValid = true;
-      } else if (option.matches("^-textFile$") && args.length == 8) {
-        throw new IllegalArgumentException("-textFile option is missing a file name.");
-      } else if (customerArgsEndIndex > 0 && args[customerArgsEndIndex - 1].matches("^-(textFile)$")) {
+      } else if (option.matches("^-(textFile|pretty)$") && args.length == 10) {
+        throw new IllegalArgumentException("-textFile or -pretty option is missing a file name.");
+      } else if (customerArgsEndIndex > 0 && args[customerArgsEndIndex - 1].matches("^-(textFile|pretty)$")) {
         isValid = true;
         --customerArgsEndIndex;
       } else
         throw new IllegalArgumentException(
-            "Option must be either -print, -README or -textFile filename in" +
+            "Option must be either -print, -README, -textFile filename, or -pretty filename in" +
                 " any order before customer's information e.g [Option] <args>");
     }
     return isValid;
@@ -91,14 +92,14 @@ class ArgumentsValidator {
   /**
   * Checks if the passed in phone number is valid.
   * @param phoneNumber
-  * The phone number can be eithr their phone number of callee phone number.
+  * The phone number can be either their phone number of callee phone number.
   * @return True if matches the regex.
   * @throws IllegalArgumentException if passed in option does not match regex.
   */
   final boolean validatePhoneNumber(final String phoneNumber){
     if(phoneNumber.matches(phoneFormat))
       return true;
-    throw new IllegalArgumentException("Phone number must in this format XXX-XXX-XXXX where X represent a number from 0 to 9");
+    throw new IllegalArgumentException("Phone number must in this format XXX-XXX-XXXX where X represent a number");
   }
 
   /**
@@ -108,11 +109,15 @@ class ArgumentsValidator {
   * @return True if matches the regex.
   * @throws IllegalArgumentException if passed in option does not match regex.
   */
-  final boolean validateTime(final String time){
-    if(time.matches(timeFormat))
+  final boolean validateTime(final String time) {
+    if (time.matches(newTimeFormat))
       return true;
-    throw new IllegalArgumentException("Time must be in this format HH:MM where" +
-        " HH is between 00 to 23 and MM is between 00 to 59");
+    throw new IllegalArgumentException("Time must be in this format HH:MM where H and M represent a number");
+  }
+  final boolean validatePM_AM(final String marker){
+    if (marker.matches(moringEveningFormat))
+      return true;
+    throw new IllegalArgumentException("Marker must be either am or pm");
   }
 
   /**
@@ -123,29 +128,34 @@ class ArgumentsValidator {
   * @throws IllegalArgumentException if passed in option does not match regex.
   */
   final boolean validateDate(final String date){
-    if(date.matches(dateFormat))
+    if(date.matches(newDateFormat))
       return true;
-    throw new IllegalArgumentException("Date must be in this format MM/DD/YYYY - M,D, and Y represent a number."
-        + "\nY -> 0 to 9"
-        + "\nM -> 1 to 12"
-        + "\nD: \n"
-        + "Month 2 -> days must be from 1 to 28\n"
-        + "Months 1, 3, 5, 7, 8, 10, and 12 -> days must be from 1 to 31\n"
-        + "Months 4, 6, 9, and 11 -> days must be from 1 to 30");
+    throw new IllegalArgumentException("Date must be in this format MM/DD/YYYY - M,D, and Y represent a number.");
   }
 
   /**
    * This is a regex to check if entered phone number is in correct format.
    */
-  private String phoneFormat = "^\\d{3}-\\d{3}-\\d{4}$";
+  private String phoneFormat = "^(\\d{3}-){2}\\d{4}$";
   /**
    * This is a regex to check if entered time is in correct format.
    */
+  @Deprecated
   private String timeFormat = "^((00)|(0?[1-9])|(1\\d)|(2[0-3])):[0-5]\\d$";
+
+  private String newTimeFormat = "^\\d{1,2}:\\d{1,2}$";
   /**
    * This is a regex to check if entered date is in correct format.
    */
+  @Deprecated
   private String dateFormat = "^(((0?[13578]|1[02])/(0?[1-9]|[12]\\d|3[01]))|"
       + "((0?[469]|11)/(0?[1-9]|[12]\\d|30))|(0?2/(0?[1-9]|1\\d|2[0-8])))/\\d{4}$";
+
+  private String newDateFormat = "^(\\d{1,2}/){2}\\d{4}$";
+
+  /**
+   * This is a regex to check pm/am
+   */
+  private String moringEveningFormat = "^[PpAa][Mm]$";
 
 }

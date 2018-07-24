@@ -3,7 +3,8 @@ package edu.pdx.cs410J.ms24;
 import edu.pdx.cs410J.AbstractPhoneBill;
 
 import java.security.InvalidParameterException;
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Collection;
 
 /**
@@ -12,15 +13,6 @@ import java.util.Collection;
  * @author Zack Salah
  */
 public class PhoneBill extends AbstractPhoneBill<PhoneCall> {
-
-  /**
-   * Notifies the caller that the PhoneBill object is empty.
-   * @return true on empty PhoneBill, otherwise false.
-   */
-  public boolean isEmpty(){
-    return (customer == null || customer.isEmpty()) && phoneCalls.isEmpty();
-  };
-
   /**
    * Create a empty <code>PhoneBill</code>.
    */
@@ -84,6 +76,7 @@ public class PhoneBill extends AbstractPhoneBill<PhoneCall> {
   @Override
   public final void addPhoneCall(final PhoneCall phoneCall) {
     phoneCalls.add(phoneCall);
+    Collections.sort(phoneCalls);
   }
 
   /**
@@ -94,6 +87,13 @@ public class PhoneBill extends AbstractPhoneBill<PhoneCall> {
   @Override
   public final Collection<PhoneCall> getPhoneCalls() {
     return phoneCalls;
+  }
+  /**
+   * Notifies the caller that the PhoneBill object is empty.
+   * @return true on empty PhoneBill, otherwise false.
+   */
+  public boolean isEmpty(){
+    return (customer == null || customer.isEmpty()) && phoneCalls.isEmpty();
   }
 
   /**
@@ -107,6 +107,7 @@ public class PhoneBill extends AbstractPhoneBill<PhoneCall> {
     for(var bill : bills){
       if(bill != null && customer.equals(bill.customer)) {
         phoneCalls.addAll(bill.getPhoneCalls());
+        Collections.sort(phoneCalls);
       } else{
         throw new InvalidParameterException("PhoneBills does not contain the same customer");
       }
@@ -117,8 +118,8 @@ public class PhoneBill extends AbstractPhoneBill<PhoneCall> {
    */
   private String customer;
   /**
-   * This <code>HasSet</code> of type <code>PhoneCall</code> is container
+   * This <code>ArrayList</code> of type <code>PhoneCall</code> is container
    * the hold all the customer's <code>PhoneCall</code>s.
    */
-  private HashSet<PhoneCall> phoneCalls = new HashSet<>();
+  private ArrayList<PhoneCall> phoneCalls = new ArrayList<>();
 }

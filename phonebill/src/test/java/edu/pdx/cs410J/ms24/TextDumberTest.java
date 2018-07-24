@@ -63,7 +63,7 @@ public class TextDumberTest {
     TextDumper textDumper = new TextDumper("Test5");
     PhoneBill phoneBill = new PhoneBill ("Zack");
     phoneBill.addPhoneCall(new PhoneCall(new String[]{"111-111-1111","112-222-2222"
-        , "11/11/1111", "11:11","11/22/1111", "22:22"}));
+        , "11/11/1111", "11:11","pm","11/22/2111", "1:22","pm"}));
     textDumper.dump(phoneBill);
   }
   @Test

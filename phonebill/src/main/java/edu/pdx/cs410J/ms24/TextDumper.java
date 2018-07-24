@@ -7,6 +7,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.security.InvalidParameterException;
+import java.text.SimpleDateFormat;
 
 /**
  * This class is simulate writing a <code>PhoneBill</code> Object to a file.
@@ -50,14 +51,16 @@ public class TextDumper implements PhoneBillDumper<PhoneBill> {
     File file = new File(path);
     FileWriter fileWriter = new FileWriter(file, true);
     var phoneCalls = bill.getPhoneCalls();
+    var formator = new SimpleDateFormat("MM/dd/yyyy h:mm a");
 
     fileWriter.append(file.length() == 0 ? bill.getCustomer(): "");
-    for(PhoneCall phoneCall: phoneCalls)
-      fileWriter.append(
-          "\n" + phoneCall.getCaller()
-          + pipe + phoneCall.getCallee()
-          + pipe + phoneCall.getStartTimeString().replace(" ", "|")
-          + pipe + phoneCall.getEndTimeString().replace(" ", "|"));
+    for(PhoneCall phoneCall: phoneCalls) {
+        fileWriter.append(
+            "\n" + phoneCall.getCaller()
+            + pipe + phoneCall.getCallee()
+            + pipe + formator.format(phoneCall.getStartTime()).replace(" ", "|")
+            + pipe + formator.format(phoneCall.getEndTime()).replace(" ", "|"));
+    }
     fileWriter.flush();
     fileWriter.close();
   }

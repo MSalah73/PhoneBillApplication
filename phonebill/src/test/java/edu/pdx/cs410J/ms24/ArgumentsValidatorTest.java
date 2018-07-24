@@ -56,13 +56,8 @@ public class ArgumentsValidatorTest {
   public void timeIn_AM_PM_Format() {
     validator.validateTime("11:59pm");
   }
-  @Test(expected = IllegalArgumentException.class)
   public void timeOutOfRange() {
-    validator.validateTime("60:60");
-  }
-  @Test(expected = IllegalArgumentException.class)
-  public void timeWithOneZeroInTheHourSection() {
-    validator.validateTime("0:00");
+    validator.validateTime("60:A6");
   }
   /*
    * validateTime
@@ -82,18 +77,6 @@ public class ArgumentsValidatorTest {
   @Test(expected = IllegalArgumentException.class)
   public void dataWithHyphens(){
     validator.validateDate("6-6-2000");
-  }
-  @Test(expected = IllegalArgumentException.class)
-  public void februayOutOfRange(){
-    validator.validateDate("2/29/2000");
-  }
-  @Test(expected = IllegalArgumentException.class)
-  public void monthsWithThirtyDaysOutOfRange(){
-    validator.validateDate("4/31/2000");
-  }
-  @Test(expected = IllegalArgumentException.class)
-  public void dateOutOfRange(){
-    validator.validateDate("99/99/2000");
   }
   /*
    * validateDate
@@ -121,27 +104,27 @@ public class ArgumentsValidatorTest {
   @Test
   public void testTextFileOptionInTheMiddle(){
     validator.checkArgumentsValidity(new String[]{"-print","-textFile","balba","-README","NONE","000-000-0000","999-999-9999",
-        "1/1/2222", "1:11","1/1/2222", "1:11"});
+        "1/1/2222", "1:11","pm","1/1/2222", "1:11","pm"});
   }
   @Test
   public void testTextFileOptionInTheBeginning(){
     validator.checkArgumentsValidity(new String[]{"-textFile","balba","-README","NONE","000-000-0000","999-999-9999",
-        "1/1/2222", "1:11","1/1/2222", "1:11"});
+        "1/1/2222", "1:11","pm","1/1/2222", "1:11","pm"});
   }
   @Test
   public void testOnlyTextFileOption(){
     validator.checkArgumentsValidity(new String[]{"-textFile","balba","NONE","000-000-0000","999-999-9999",
-        "1/1/2222", "1:11","1/1/2222", "1:11"});
+        "1/1/2222", "1:11","pm","1/1/2222", "1:11","pm"});
   }
   @Test(expected = IllegalArgumentException.class)
   public void testStructureOfTextFileWithOtherOptions(){
     validator.checkArgumentsValidity(new String[]{"-print","balba","NONE","000-000-0000","999-999-9999",
-        "1/1/2222", "1:11","1/1/2222", "1:11"});
+        "1/1/2222", "1:11","pm","1/1/2222", "1:11","pm"});
   }
   @Test(expected = IllegalArgumentException.class)
   public void testTextFileOptionWithNoFileName(){
     validator.checkArgumentsValidity(new String[]{"-textFile","NONE","000-000-0000","999-999-9999",
-        "1/1/2222", "1:11","1/1/2222", "1:11"});
+        "1/1/2222", "1:11","pm","1/1/2222", "1:11", "pm"});
   }
   @Test(expected = IllegalArgumentException.class)
   public void optionWithoutHyphen(){
@@ -182,7 +165,7 @@ public class ArgumentsValidatorTest {
   @Test
   public void testIfArgsValidityValidateCorrectly(){
     validator.checkArgumentsValidity(new String[]{"-print","-README","NONE","000-000-0000","999-999-9999",
-        "1/1/2222", "1:11","1/1/2222", "1:11"});
+        "1/1/2222", "1:11","pm","1/1/2222", "1:11","pm"});
   }
   @Test(expected = IllegalArgumentException.class)
   public void argsWithPhoneNumbersFormattedWrongly(){
