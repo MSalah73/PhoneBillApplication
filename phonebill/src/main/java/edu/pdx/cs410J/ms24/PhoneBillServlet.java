@@ -91,7 +91,6 @@ public class PhoneBillServlet extends HttpServlet
     try {
       phoneCall = new PhoneCall(list.toArray(new String[0]));
     } catch (InvalidParameterException e) {
-      System.out.println(e.getMessage());
       response.sendError(HttpServletResponse.SC_PRECONDITION_FAILED, e.getMessage());
       return;
     }
