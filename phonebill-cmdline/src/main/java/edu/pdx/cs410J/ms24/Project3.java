@@ -4,6 +4,7 @@ import static java.util.Arrays.asList;
 
 import edu.pdx.cs410J.ParserException;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -22,8 +23,9 @@ public class Project3 {
     List<String> list = asList(args);
     readMe(list);
     validateArguments(args);
-    final PhoneBill readBill = read(list);
+    final PhoneBill readBill = read(list);;
     PhoneBill bill = new PhoneBill(args[args.length - MINIMAL_ARGUMENTS_LENGTH], new PhoneCall(args));
+    System.out.println((ArrayList) readBill.getPhoneCalls());
     prettify(list, bill.getCustomer(), bill, readBill);
     write(list, bill);
     printOptionExecutor(list, bill);
