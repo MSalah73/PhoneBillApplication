@@ -31,6 +31,7 @@ public class PhoneBillServlet extends HttpServlet
   /**
    * Parameter for print all option
    */
+  @Deprecated
   static final String PRINTALLOPTION_PARAMETER = "printall";
   /**
    * Parameter for adding a <code>PhoneCall</code>
@@ -55,14 +56,14 @@ public class PhoneBillServlet extends HttpServlet
   {
     response.setContentType( "text/plain" );
     String search = getParameter(SEARCHOPTION_PARAMETER, request);
-    String printall = getParameter(PRINTALLOPTION_PARAMETER, request);
+    //String printall = getParameter(PRINTALLOPTION_PARAMETER, request);
 
     if (search != null)
       processSearch(request, response);
-    else if(printall != null)
-      processPrintAll(request, response);
     else
-      missingRequiredParameter(response, printall +" or "+search);
+      processPrintAll(request, response);
+   // else
+     // missingRequiredParameter(response, printall +" or "+search);
   }
 
 

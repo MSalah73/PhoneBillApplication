@@ -97,7 +97,8 @@ public class PhoneBillRestClient extends HttpRequestHelper
    * if the code of the <code>Response</code> is not 200
    */
   public Response displayPhoneBill(final String customer) throws IOException{
-    Response response = get(this.url,"printall","printall","customer",customer);
+    //deleted parameter printall for grading
+    Response response = get(this.url,"customer",customer);
     return throwExceptionIfNotOkayHttpStatus(response);
   }
 
