@@ -24,11 +24,15 @@ import com.google.gwt.user.datepicker.client.DateBox;
   /**
    * Box Option Enum
    */
+
+
+public class PhoneBillButtonsAndPanels {
+   /**
+   * Box Option Enum
+   */
   enum BoxSetting{
     HourAndMinute, PhoneNumber;
   }
-public class PhoneBillButtonsAndPanels {
-
   private TextBoxAndDateBoxLogic textBoxAndDateBoxLogic = new TextBoxAndDateBoxLogic();
 
   public VerticalPanel createDatePanel(final String placeHolder){
