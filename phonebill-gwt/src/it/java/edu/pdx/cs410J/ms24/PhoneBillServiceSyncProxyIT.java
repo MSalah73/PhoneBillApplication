@@ -1,7 +1,6 @@
 package edu.pdx.cs410J.ms24;
 
 import com.gdevelop.gwt.syncrpc.SyncProxy;
-import edu.pdx.cs410J.ms24.client.PhoneBill;
 import edu.pdx.cs410J.ms24.client.PhoneBillService;
 import edu.pdx.cs410J.web.HttpRequestHelper;
 import org.junit.Test;
@@ -19,17 +18,6 @@ public class PhoneBillServiceSyncProxyIT extends HttpRequestHelper {
   public void gwtWebApplicationIsRunning() throws IOException {
     Response response = get(this.webAppUrl);
     assertEquals(200, response.getCode());
-  }
-
-  @Test
-  public void canInvokePhoneBillServiceWithGwtSyncProxy() {
-    String moduleName = "phonebill";
-    SyncProxy.setBaseURL(this.webAppUrl + "/" + moduleName + "/");
-
-    PhoneBillService service = SyncProxy.createSync(PhoneBillService.class);
-    PhoneBill bill = service.getPhoneBill();
-    assertEquals("CS410J", bill.getCustomer());
-    assertEquals(1, bill.getPhoneCalls().size());
   }
 
 }

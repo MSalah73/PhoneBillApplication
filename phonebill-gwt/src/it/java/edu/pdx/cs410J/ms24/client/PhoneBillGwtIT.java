@@ -31,7 +31,7 @@ public class PhoneBillGwtIT extends GWTTestCase {
     waitBeforeRunning(500, new Runnable() {
       @Override
       public void run() {
-        click(ui.showPhoneBillButton);
+        click((Button) ui.addPhoneBillPanel.getWidget(6));
       }
     });
 
@@ -39,16 +39,14 @@ public class PhoneBillGwtIT extends GWTTestCase {
     waitBeforeRunning(1000, new Runnable() {
       @Override
       public void run() {
-        String message = alerter.getMessage();
-        assertNotNull("No message was displayed", message);
-        assertTrue(message, message.contains("CS410J's phone bill with 1 phone calls"));
+        assertEquals("Fields in red are either missing or wrong", ui.errorLog.getText());
         finishTest();
       }
     });
 
     delayTestFinish(1000);
   }
-
+/*
   @Test
   public void testClickingShowUndeclaredExceptionButtonAlertsWithExpectedMessage() {
     final CapturingAlerter alerter = new CapturingAlerter();
@@ -137,7 +135,7 @@ public class PhoneBillGwtIT extends GWTTestCase {
     // Wait up to 1000 milliseconds for the validation to complete
     delayTestFinish(1000);
   }
-
+*/
   private void waitBeforeRunning(int delayMillis, final Runnable operation) {
     Timer click = new Timer() {
       @Override

@@ -4,40 +4,87 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.logical.shared.BeforeSelectionEvent;
+import com.google.gwt.event.logical.shared.BeforeSelectionHandler;
+import com.google.gwt.user.client.ui.CheckBox;
+import com.google.gwt.user.client.ui.DecoratorPanel;
+import com.google.gwt.user.client.ui.DialogBox;
+import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.TabPanel;
+import com.google.gwt.user.client.ui.TextArea;
+import com.google.gwt.user.client.ui.ToggleButton;
 import com.google.gwt.event.shared.UmbrellaException;
+import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.RootPanel;
+import com.google.gwt.user.client.ui.ValueBoxBase.TextAlignment;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.datepicker.client.DateBox;
 
-import java.util.Collection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 /**
  * A basic GWT class that makes sure that we can send an Phone Bill back from the server
  */
 public class PhoneBillGwt implements EntryPoint {
+
   private final Alerter alerter;
   private final PhoneBillServiceAsync phoneBillService;
   private final Logger logger;
-  
+  private final PhoneBillButtonsAndPanels phoneBillButtonsAndPanels = new PhoneBillButtonsAndPanels();
 
-  @VisibleForTesting
-  Button showPhoneBillButton;
+  /**
+   * Box Option Enum
+   */
+  enum PageType{
+    AddPhoneCall, SearchPhoneCall;
+  }
+  /**
+   * Panels
+   */
+  TabPanel        tabPanel;         VerticalPanel   addPhoneBillPanel;
+  VerticalPanel   prettyPrintPanel; VerticalPanel   searchPhoneCallsPanel;
+  VerticalPanel   homePanel;
+  /**
+   * Text information for Panels
+   */
+  DialogBox       errorLog;
+  /**
+   * Add phone call widgets
+   */
+  TextBox         addCustomer;
+  TextBox         addCaller;
+  TextBox         addCallee;
 
-  @VisibleForTesting
-  Button showUndeclaredExceptionButton;
+  TextBox         addStartTime;     TextBox         addEndTime;
+  DateBox         addStartDate;     DateBox         addEndDate;
+  ToggleButton    addStartMarker;   ToggleButton    addEndMarker;
+  CheckBox        printAddedPhoneCall;
+  /**
+   * Search Phone calls widgets
+   */
+  TextBox         searchCustomer;
 
-  @VisibleForTesting
-  Button showDeclaredExceptionButton;
+  TextBox         searchStartTime;   TextBox         searchEndTime;
+  DateBox         searchStartDate;   DateBox         searchEndDate;
+  ToggleButton    searchStartMarker; ToggleButton    searchEndMarker;
+  /**
+   * Pretty print widgets
+   */
+  TextBox         printCustomer;
+  /**
+   * Page's display
+   */
+  DecoratorPanel  addPage;           DecoratorPanel  searchPage;
+  DecoratorPanel  prettyPage;
 
-  @VisibleForTesting
-  Button showClientSideExceptionButton;
-  
   public PhoneBillGwt() {
     this(new Alerter() {
       @Override
@@ -83,101 +130,56 @@ public class PhoneBillGwt implements EntryPoint {
   }
 
   private void addWidgets(VerticalPanel panel) {
-    showPhoneBillButton = new Button("Show Phone Bill");
-    showPhoneBillButton.addClickHandler(new ClickHandler() {
-      @Override
-      public void onClick(ClickEvent clickEvent) {
-        showPhoneBill();
-      }
-    });
-
-    showUndeclaredExceptionButton = new Button("Show undeclared exception");
-    showUndeclaredExceptionButton.addClickHandler(new ClickHandler() {
-      @Override
-      public void onClick(ClickEvent clickEvent) {
-        showUndeclaredException();
-      }
-    });
-
-    showDeclaredExceptionButton = new Button("Show declared exception");
-    showDeclaredExceptionButton.addClickHandler(new ClickHandler() {
-      @Override
-      public void onClick(ClickEvent clickEvent) {
-        showDeclaredException();
-      }
-    });
-
-    showClientSideExceptionButton= new Button("Show client-side exception");
-    showClientSideExceptionButton.addClickHandler(new ClickHandler() {
-      @Override
-      public void onClick(ClickEvent clickEvent) {
-        throwClientSideException();
-      }
-    });
-
-    panel.add(showPhoneBillButton);
-    panel.add(showUndeclaredExceptionButton);
-    panel.add(showDeclaredExceptionButton);
-    panel.add(showClientSideExceptionButton);
   }
 
-  private void throwClientSideException() {
-    logger.info("About to throw a client-side exception");
-    throw new IllegalStateException("Expected exception on the client side");
-  }
+  private void  addPhoneCall(){
+    final String[] phoneCallInfo = new String[]{addCustomer.getText(), addCaller.getText(), addCallee.getText(),
+        addStartDate.getTextBox().getText() ,addStartTime.getText(),addStartMarker.getText(),
+        addEndDate.getTextBox().getText(), addEndTime.getText(), addEndMarker.getText()};
 
-  private void showUndeclaredException() {
-    logger.info("Calling throwUndeclaredException");
-    phoneBillService.throwUndeclaredException(new AsyncCallback<Void>() {
+    phoneBillService.addPhoneCall(phoneCallInfo, printAddedPhoneCall.getValue(),
+        new AsyncCallback<String>() {
+          @Override
+          public void onFailure(Throwable throwable) {
+            ((TextArea)((VerticalPanel) addPage.getWidget()).getWidget(0)).setText(throwable.getMessage());
+          }
+          @Override
+          public void onSuccess(String s) {
+            ((TextArea)((VerticalPanel) addPage.getWidget()).getWidget(0)).setText(s);
+          }
+        });
+    addPage.setVisible(true);
+  }
+  private void searchPhoneCalls(){
+    phoneBillService.searchPhoneCalls(searchCustomer.getText(), searchStartDate.getValue(), searchEndDate.getValue(),
+        new AsyncCallback<String>() {
+          @Override
+          public void onFailure(Throwable throwable) {
+            ((TextArea)((VerticalPanel) searchPage.getWidget()).getWidget(0)).setText(throwable.getMessage());
+          }
+          @Override
+          public void onSuccess(String s) {
+            ((TextArea)((VerticalPanel) searchPage.getWidget()).getWidget(0)).setText(s);
+          }
+        });
+    searchPage.setVisible(true);
+
+  }
+  private void prettyPrintPhoneBill(){
+    phoneBillService.prettyPrint(printCustomer.getText(),new AsyncCallback<String>() {
       @Override
-      public void onFailure(Throwable ex) {
-        alertOnException(ex);
+      public void onFailure(Throwable throwable) {
+       ((TextArea)((VerticalPanel) prettyPage.getWidget()).getWidget(0)).setText(throwable.getMessage());
       }
 
       @Override
-      public void onSuccess(Void aVoid) {
-        alerter.alert("This shouldn't happen");
+      public void onSuccess(String s) {
+        ((TextArea)((VerticalPanel) prettyPage.getWidget()).getWidget(0)).setText(s);
       }
     });
+    prettyPage.setVisible(true);
   }
 
-  private void showDeclaredException() {
-    logger.info("Calling throwDeclaredException");
-    phoneBillService.throwDeclaredException(new AsyncCallback<Void>() {
-      @Override
-      public void onFailure(Throwable ex) {
-        alertOnException(ex);
-      }
-
-      @Override
-      public void onSuccess(Void aVoid) {
-        alerter.alert("This shouldn't happen");
-      }
-    });
-  }
-
-  private void showPhoneBill() {
-    logger.info("Calling getPhoneBill");
-    phoneBillService.getPhoneBill(new AsyncCallback<PhoneBill>() {
-
-      @Override
-      public void onFailure(Throwable ex) {
-        alertOnException(ex);
-      }
-
-      @Override
-      public void onSuccess(PhoneBill phoneBill) {
-        StringBuilder sb = new StringBuilder(phoneBill.toString());
-        Collection<PhoneCall> calls = phoneBill.getPhoneCalls();
-        for (PhoneCall call : calls) {
-          sb.append(call);
-          sb.append("\n");
-        }
-        alerter.alert(sb.toString());
-      }
-    });
-  }
-  
   @Override
   public void onModuleLoad() {
     setUpUncaughtExceptionHandler();
@@ -191,16 +193,469 @@ public class PhoneBillGwt implements EntryPoint {
       }
     });
   }
+  private void createTabPages(){
+    errorLog = new DialogBox();
+    errorLog.setAnimationEnabled(true);
+    errorLog.setGlassEnabled(true);
+    errorLog.add(phoneBillButtonsAndPanels.createCloseButton(errorLog));
 
+    tabPanel = new TabPanel();
 
+    phoneBillButtonsAndPanels.setFixedSizeWidget(.987,.905, tabPanel.getDeckPanel().getElement().getStyle());
+
+    tabPanel.getElement().getStyle().setPadding(5, Unit.PX);
+    tabPanel.getDeckPanel().getElement().getStyle().setPadding(5, Unit.PX);
+    tabPanel.addBeforeSelectionHandler(new BeforeSelectionHandler<Integer>() {
+      @Override
+      public void onBeforeSelection(BeforeSelectionEvent<Integer> beforeSelectionEvent) {
+        dateReset();
+      }
+    });
+    homePanel = phoneBillButtonsAndPanels.createHomePage();
+    addPhoneBillPanel = createAddPhoneCallPage();
+    searchPhoneCallsPanel = createSearchPage();
+    prettyPrintPanel = createPrettyPrintPage();
+
+    tabPanel.add(homePanel, "Home");
+    tabPanel.add(addPhoneBillPanel,"Add Phone Call");
+    tabPanel.add(searchPhoneCallsPanel, "Search Phone Calls");
+    tabPanel.add(prettyPrintPanel, "Pretty Print PhoneBill");
+  }
   private void setupUI() {
     RootPanel rootPanel = RootPanel.get();
-    VerticalPanel panel = new VerticalPanel();
-    rootPanel.add(panel);
-
-    addWidgets(panel);
+    createTabPages();
+    tabPanel.selectTab(0);
+    rootPanel.get().add(tabPanel);
   }
 
+  private VerticalPanel createAddPhoneCallPage(){
+    VerticalPanel page = new VerticalPanel();
+    page.add(phoneBillButtonsAndPanels.createHelpMenu());
+    page.setSpacing(8);
+    page.add(phoneBillButtonsAndPanels.createTextAreaWithNoBorders("herr\na\na\na\na\na\na\na", .97, .06));
+
+    HorizontalPanel horizontalPanel;
+    VerticalPanel verticalPanelToAdd;
+
+
+    Label label = phoneBillButtonsAndPanels.labelSetup("Customer's Name: ");
+    label.getElement().getStyle().setPaddingRight(50,Unit.PX);
+    addCustomer = new TextBox();
+    addCustomer.getElement().setAttribute("placeholder","Name");
+    addCustomer.setAlignment(TextAlignment.CENTER);
+    addCustomer.addClickHandler(new ClickHandler() {
+      @Override
+      public void onClick(ClickEvent clickEvent) {
+        addCustomer.getElement().getStyle().clearBackgroundColor();
+      }
+    });
+    printAddedPhoneCall = new CheckBox("Print added call");
+
+    horizontalPanel = new HorizontalPanel();
+    horizontalPanel.setSpacing(4);
+    horizontalPanel.add(label);
+    horizontalPanel.add(addCustomer);
+
+    page.add(horizontalPanel);
+    page.add(callerCalleePanel());
+    page.add(dateAndTimePanel(PageType.AddPhoneCall));
+    page.add(printAddedPhoneCall);
+    page.add(addCallButton());
+
+    addPage = phoneBillButtonsAndPanels.createHidableTextArea("",.97,.10, null);
+    addPage.setVisible(false);
+
+    page.add(addPage);
+
+    return page;
+  }
+  private VerticalPanel createSearchPage(){
+    VerticalPanel page = new VerticalPanel();
+    page.add(phoneBillButtonsAndPanels.createHelpMenu());
+    page.setSpacing(8);
+    page.add(phoneBillButtonsAndPanels.createTextAreaWithNoBorders("herr\na\na\na\na\na\na\na", .97, .06));
+
+    HorizontalPanel horizontalPanel;
+    VerticalPanel verticalPanelToAdd;
+
+    Label label = phoneBillButtonsAndPanels.labelSetup("Customer's Name: ");
+    label.getElement().getStyle().setPaddingRight(50,Unit.PX);
+    searchCustomer = new TextBox();
+    searchCustomer.getElement().setAttribute("placeholder","Name");
+    searchCustomer.setAlignment(TextAlignment.CENTER);
+    searchCustomer.addClickHandler(new ClickHandler() {
+      @Override
+      public void onClick(ClickEvent clickEvent) {
+        searchCustomer.getElement().getStyle().clearBackgroundColor();
+      }
+    });
+
+    horizontalPanel = new HorizontalPanel();
+    horizontalPanel.setSpacing(4);
+    horizontalPanel.add(label);
+    horizontalPanel.add(searchCustomer);
+
+    page.add(horizontalPanel);
+    page.add(dateAndTimePanel(PageType.SearchPhoneCall));
+    page.add(addSearchButton());//add new
+
+    searchPage = phoneBillButtonsAndPanels.createHidableTextArea("",.97,.2, null);//searchPage
+    searchPage.setVisible(false);
+
+    page.add(searchPage);
+
+    return page;
+  }
+  private VerticalPanel createPrettyPrintPage(){
+    VerticalPanel page = new VerticalPanel();
+    page.add(phoneBillButtonsAndPanels.createHelpMenu());
+    page.setSpacing(8);
+    page.add(phoneBillButtonsAndPanels.createTextAreaWithNoBorders("herr\na\na\na\na\na\na\na", .97, .06));
+
+    Label label = phoneBillButtonsAndPanels.labelSetup("Customer's Name: ");
+    label.getElement().getStyle().setPaddingRight(50,Unit.PX);
+    printCustomer = new TextBox();
+    printCustomer.getElement().setAttribute("placeholder","Name");
+    printCustomer.setAlignment(TextAlignment.CENTER);
+    printCustomer.addClickHandler(new ClickHandler() {
+      @Override
+      public void onClick(ClickEvent clickEvent) {
+        printCustomer.getElement().getStyle().clearBackgroundColor();
+      }
+    });
+    HorizontalPanel horizontalPanel = new HorizontalPanel();
+    horizontalPanel.setSpacing(4);
+    horizontalPanel.add(label);
+    horizontalPanel.add(printCustomer);
+
+    page.add(horizontalPanel);
+    page.add(addPrettyButton());//add new
+
+    prettyPage = phoneBillButtonsAndPanels.createHidableTextArea("",.97,.4, null);//searchPage
+    prettyPage.setVisible(false);
+
+    page.add(prettyPage);
+
+    return page;
+  }
+  private Button addCallButton() {
+    Button button = new Button();
+    button.setHTML("Submit");
+    button.addClickHandler(new ClickHandler() {
+      @Override
+      public void onClick(ClickEvent clickEvent) {
+        String log = new String();
+        int startValid = 0;
+        int endValid = 0;
+        boolean isRed = false;
+
+        if(addCustomer.getText().length() == 0){
+          addCustomer.getElement().getStyle().setBackgroundColor("pink");
+          isRed = true;
+        }
+
+        if (addCaller.getText().length() == 0) {
+          addCaller.getElement().getStyle().setBackgroundColor("pink");
+          isRed = true;
+        }else if (addCaller.getElement().getStyle().getBackgroundColor() == "pink")
+          isRed = true;
+
+        if (addCallee.getText().length() == 0){
+          addCallee.getElement().getStyle().setBackgroundColor("pink");
+          isRed = true;
+        } else if (addCallee.getElement().getStyle().getBackgroundColor() == "pink")
+          isRed = true;
+
+        if (addStartDate.getTextBox().getText().length() == 0){
+          addStartDate.getTextBox().getElement().getStyle().setBackgroundColor("pink");
+          isRed = true;
+        }
+        else if (addStartDate.getTextBox().getElement().getStyle().getBackgroundColor() == "pink")
+          isRed = true;
+        else
+          ++startValid;
+
+        if (addStartTime.getText().length() == 0){
+          addStartTime.getElement().getStyle().setBackgroundColor("pink");
+          isRed = true;
+        } else if (addStartTime.getElement().getStyle().getBackgroundColor() == "pink")
+          isRed = true;
+        else
+          ++startValid;
+
+        if (addEndDate.getTextBox().getText().length() == 0){
+          addEndDate.getTextBox().getElement().getStyle().setBackgroundColor("pink");
+          isRed = true;
+        } else if (addEndDate.getTextBox().getElement().getStyle().getBackgroundColor() == "pink")
+          isRed = true;
+        else
+          ++endValid;
+
+        if (addEndTime.getText().length() == 0){
+          addEndTime.getElement().getStyle().setBackgroundColor("pink");
+          isRed = true;
+        } else if (addEndTime.getElement().getStyle().getBackgroundColor() == "pink")
+          isRed = true;
+        else
+          ++endValid;
+
+        if (startValid == 2 && endValid == 2 && !isRed) {
+          String Start = addStartDate.getTextBox().getText()+" "+addStartTime.getText()+" "+addStartMarker.getText();
+          String End = addEndDate.getTextBox().getText()+" "+addEndTime.getText()+" "+addEndMarker.getText();
+          if (!DateTimeFormat.getFormat("MM/dd/yyyy h:mm a").parse(Start)
+              .before(DateTimeFormat.getFormat("MM/dd/yyyy h:mm a").parse(End)))
+            log += "The end date and time of the phone call not not be before it started or equal to it";
+        }
+        //getClass.isAssignableFrom is not included so
+        //I'm doing this to imitate the logic if I can use isAssignableFrom
+        if (!log.isEmpty() || isRed) {
+          errorLog.setText(isRed?"Fields in red are either missing or wrong":log);
+          errorLog.center();
+          errorLog.show();
+        }else
+          addPhoneCall();
+      }
+    });
+    return button;
+  }
+  private Button addSearchButton(){
+    Button button = new Button();
+    button.setHTML("Submit");
+    button.addClickHandler(new ClickHandler() {
+      @Override
+      public void onClick(ClickEvent clickEvent) {
+        String log = new String();
+        int startValid = 0;
+        int endValid = 0;
+        boolean isRed = false;
+
+        if(searchCustomer.getText().length() == 0){
+          searchCustomer.getElement().getStyle().setBackgroundColor("pink");
+          isRed = true;
+        }
+
+        if (searchStartDate.getTextBox().getText().length() == 0){
+          searchStartDate.getTextBox().getElement().getStyle().setBackgroundColor("pink");
+          isRed = true;
+        }
+        else if (searchStartDate.getTextBox().getElement().getStyle().getBackgroundColor() == "pink")
+          isRed = true;
+        else
+          ++startValid;
+
+        if (searchStartTime.getText().length() == 0){
+          searchStartTime.getElement().getStyle().setBackgroundColor("pink");
+          isRed = true;
+        } else if (searchStartTime.getElement().getStyle().getBackgroundColor() == "pink")
+          isRed = true;
+        else
+          ++startValid;
+
+        if (searchEndDate.getTextBox().getText().length() == 0){
+          searchEndDate.getTextBox().getElement().getStyle().setBackgroundColor("pink");
+          isRed = true;
+        } else if (searchEndDate.getTextBox().getElement().getStyle().getBackgroundColor() == "pink")
+          isRed = true;
+        else
+          ++endValid;
+
+        if (searchEndTime.getText().length() == 0){
+          searchEndTime.getElement().getStyle().setBackgroundColor("pink");
+          isRed = true;
+        } else if (searchEndTime.getElement().getStyle().getBackgroundColor() == "red")
+          isRed = true;
+        else
+          ++endValid;
+
+        if (startValid == 2 && endValid == 2 && !isRed) {
+          String Start = searchStartDate.getTextBox().getText()+" "+searchStartTime.getText()+" "+searchStartMarker.getText();
+          String End = searchEndDate.getTextBox().getText()+" "+searchEndTime.getText()+" "+searchEndMarker.getText();
+          if (!DateTimeFormat.getFormat("MM/dd/yyyy h:mm a").parse(Start)
+              .before(DateTimeFormat.getFormat("MM/dd/yyyy h:mm a").parse(End)))
+            log += "The end date and time of the phone call not not be before it started or equal to it";
+        }
+        //getClass.isAssignableFrom is not included so
+        //I'm doing this to imitate the logic if I can use isAssignableFrom
+        if (!log.isEmpty() || isRed) {
+          errorLog.setText(isRed?"Fields in red are either missing or wrong":log);
+          errorLog.center();
+          errorLog.show();
+        }else
+          searchPhoneCalls();
+      }
+    });
+    return button;
+  }
+  private Button addPrettyButton(){
+    Button button = new Button();
+    button.setHTML("Submit");
+    button.addClickHandler(new ClickHandler() {
+      @Override
+      public void onClick(ClickEvent clickEvent) {
+        String log = new String();
+        boolean isRed = false;
+
+        if(printCustomer.getText().length() == 0){
+          printCustomer.getElement().getStyle().setBackgroundColor("pink");
+          isRed = true;
+        }
+        //getClass.isAssignableFrom is not included so
+        //I'm doing this to imitate the logic if I can use isAssignableFrom
+        if (!log.isEmpty() || isRed) {
+          errorLog.setText(isRed?"Fields in red are either missing or wrong":log);
+          errorLog.center();
+          errorLog.show();
+        }else
+          prettyPrintPhoneBill();
+      }
+    });
+    return button;
+  }
+  private HorizontalPanel callerCalleePanel(){
+    HorizontalPanel horizontalPanel = new HorizontalPanel();
+    VerticalPanel verticalPanel;
+    horizontalPanel.setSpacing(4);
+    horizontalPanel.getElement().getStyle().setPaddingTop(30,Unit.PX);
+
+    verticalPanel = phoneBillButtonsAndPanels.createTimeOrPhonePanel("Caller", BoxSetting.PhoneNumber);
+    addCaller = ((TextBox) verticalPanel.getWidget(0));
+
+    horizontalPanel.add(phoneBillButtonsAndPanels.labelSetup("Caller's Phone Number: "));
+    horizontalPanel.add(verticalPanel);
+
+    verticalPanel = phoneBillButtonsAndPanels.createTimeOrPhonePanel("Callee", BoxSetting.PhoneNumber);
+    addCallee = ((TextBox) verticalPanel.getWidget(0));
+
+    horizontalPanel.add(phoneBillButtonsAndPanels.labelSetup("Callee's Phone Number: "));
+    horizontalPanel.add(verticalPanel);
+    return horizontalPanel;
+  }
+  private VerticalPanel dateAndTimePanel(PageType pageType){
+    HorizontalPanel start = new HorizontalPanel();
+    HorizontalPanel end = new HorizontalPanel();
+    VerticalPanel toReturn = new VerticalPanel();
+
+    VerticalPanel verticalPanel;
+
+    start.setSpacing(4);
+    end.setSpacing(4);
+
+    boolean type = pageType.equals(PageType.AddPhoneCall);
+
+    if(!type) {
+      verticalPanel = phoneBillButtonsAndPanels.createDatePanel("Date");
+      searchStartDate = ((DateBox) verticalPanel.getWidget(0));
+
+      start.add(phoneBillButtonsAndPanels.labelSetup("From: "));
+      start.add(verticalPanel);
+
+      verticalPanel = phoneBillButtonsAndPanels.createTimeOrPhonePanel("Time", BoxSetting.HourAndMinute);
+      searchStartTime = (TextBox) verticalPanel.getWidget(0);
+
+      searchStartMarker = new ToggleButton("AM", "PM");
+
+      start.add(verticalPanel);
+      start.add(searchStartMarker);
+
+      verticalPanel = phoneBillButtonsAndPanels.createDatePanel("Date");
+      searchEndDate = ((DateBox) verticalPanel.getWidget(0));
+
+      end.add(phoneBillButtonsAndPanels.labelSetup("To: "));
+      end.add(verticalPanel);
+
+      verticalPanel = phoneBillButtonsAndPanels.createTimeOrPhonePanel("Time", BoxSetting.HourAndMinute);
+      searchEndTime = (TextBox) verticalPanel.getWidget(0);
+
+      searchEndMarker = new ToggleButton("AM", "PM");
+
+      end.add(verticalPanel);
+      end.add(searchEndMarker);
+    }else{
+      verticalPanel = phoneBillButtonsAndPanels.createDatePanel("Date");
+      addStartDate = ((DateBox) verticalPanel.getWidget(0));
+
+      start.add(phoneBillButtonsAndPanels.labelSetup("Call started on: "));
+      start.add(verticalPanel);
+
+      verticalPanel = phoneBillButtonsAndPanels.createTimeOrPhonePanel("Time", BoxSetting.HourAndMinute);
+      addStartTime = (TextBox) verticalPanel.getWidget(0);
+
+      addStartMarker = new ToggleButton("AM", "PM");
+
+      start.add(verticalPanel);
+      start.add(addStartMarker);
+
+      verticalPanel = phoneBillButtonsAndPanels.createDatePanel("Date");
+      addEndDate = ((DateBox) verticalPanel.getWidget(0));
+
+      end.add(phoneBillButtonsAndPanels.labelSetup("Call ended on: "));
+      end.add(verticalPanel);
+
+      verticalPanel = phoneBillButtonsAndPanels.createTimeOrPhonePanel("Time", BoxSetting.HourAndMinute);
+      addEndTime = (TextBox) verticalPanel.getWidget(0);
+
+      addEndMarker = new ToggleButton("AM", "PM");
+
+      end.add(verticalPanel);
+      end.add(addEndMarker);
+    }
+    toReturn.add(start);
+    toReturn.add(end);
+    return toReturn;
+  }
+  private void dateReset(){
+    addCustomer.setText("");
+    addCustomer.getElement().getStyle().clearBackgroundColor();
+
+    printCustomer.setText("");
+    printCustomer.getElement().getStyle().clearBackgroundColor();
+
+    searchCustomer.setText("");
+    searchCustomer.getElement().getStyle().clearBackgroundColor();
+
+    addCaller.setText("");
+    addCaller.getElement().getStyle().clearBackgroundColor();
+
+    addCallee.setText("");
+    addCallee.getElement().getStyle().clearBackgroundColor();
+
+    addStartDate.getTextBox().setText("");
+    addStartDate.getTextBox().getElement().getStyle().clearBackgroundColor();
+
+    addEndDate.getTextBox().setText("");
+    addEndDate.getTextBox().getElement().getStyle().clearBackgroundColor();
+
+    addStartTime.setText("");
+    addStartTime.getElement().getStyle().clearBackgroundColor();
+
+    addEndTime.setText("");
+    addEndTime.getElement().getStyle().clearBackgroundColor();
+
+    addStartMarker.setDown(false);
+    addEndMarker.setDown(false);
+
+    printAddedPhoneCall.setValue(false);
+
+    searchStartDate.getTextBox().setText("");
+    searchStartDate.getTextBox().getElement().getStyle().clearBackgroundColor();
+
+    searchEndDate.getTextBox().setText("");
+    searchEndDate.getTextBox().getElement().getStyle().clearBackgroundColor();
+
+    searchStartTime.setText("");
+    searchStartTime.getElement().getStyle().clearBackgroundColor();
+
+    searchEndTime.setText("");
+    searchEndTime.getElement().getStyle().clearBackgroundColor();
+
+    searchStartMarker.setDown(false);
+    searchEndMarker.setDown(false);
+
+    addPage.setVisible(false);
+    searchPage.setVisible(false);
+    prettyPage.setVisible(false);
+
+  }
   private void setUpUncaughtExceptionHandler() {
     GWT.setUncaughtExceptionHandler(new GWT.UncaughtExceptionHandler() {
       @Override
@@ -209,10 +664,8 @@ public class PhoneBillGwt implements EntryPoint {
       }
     });
   }
-
   @VisibleForTesting
   interface Alerter {
     void alert(String message);
   }
-
 }

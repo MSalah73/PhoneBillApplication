@@ -1,17 +1,53 @@
 package edu.pdx.cs410J.ms24.server;
 
 import edu.pdx.cs410J.ms24.client.PhoneBill;
+import java.util.Date;
+import org.junit.FixMethodOrder;
 import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
-
+@FixMethodOrder()
 public class PhoneBillServiceImplTest {
-
-  @Test
-  public void serviceReturnsExpectedPhoneBill() {
-    PhoneBillServiceImpl service = new PhoneBillServiceImpl();
-    PhoneBill bill = service.getPhoneBill();
-    assertThat(bill.getPhoneCalls().size(), equalTo(1));
+  PhoneBillServiceImpl service = new PhoneBillServiceImpl();
+  public PhoneBillServiceImplTest() throws Throwable {
+   String[] agrs = new String[]{"Zack","111-111-1111","222-222-2222","11/11/1111","11:11","am","11/11/1111","11:11","pm"};
+    String s = service.addPhoneCall(agrs,false);
   }
+  @Test
+  public void addingPhoneBill() throws Throwable {
+    String[] agrs = new String[]{"Zack","111-111-1111","222-222-2222","11/11/1111","11:11","am","11/11/1111","11:11","pm"};
+    String s = service.addPhoneCall(agrs,false);
+    assertThat("it should add the phone call",s.equals("Phone call has been added\n"));
+  }
+  @Test(expected = Throwable.class)
+  public void addWithUnformatedDate() throws Throwable {
+    String[] agrs = new String[]{"Zack","111-111-1111","222-222-2222","11/11/1111","11:11","am","11/11/1111","11:11","am"};
+    String s = service.addPhoneCall(agrs,false);
+    assertThat("it should add the phone call",s.equals("Phone call has been added\n"));
+  }
+  @Test
+  public void searchCalls() throws Throwable {
+    Date before = new Date("11/11/1111 11:11 am");
+    Date after = new Date("11/11/1111 11:11 pm");
+    String s = service.searchPhoneCalls("Zack",before,after);
+    assertThat("It should find the redefined phone call",s.contains("Customer: Zack"));
+  }
+  @Test(expected = Throwable.class)
+  public void invaildSearchCalls() throws Throwable {
+    String[] agrs = new String[]{"Zack","111-111-1111","222-222-2222","11/11/1111","11:11","am","11/11/1111","11:11","am"};
+    String s = service.addPhoneCall(agrs,false);
+    assertThat("it should add the phone call",s.equals("Phone call has been added\n"));
+  }
+  @Test(expected = Throwable.class)
+  public void PrettyPrintInvalidPhoneBill() throws Throwable {
+    String s = service.prettyPrint("lol");
+    assertThat("User \"lol\" should not be registered",s.contains("Customer: lol"));
+  }
+  @Test
+  public void prettyPrintValidPhoneBill() throws Throwable {
+    String s = service.prettyPrint("Zack");
+    assertThat("User \"Zack\" should be registered",s.contains("Customer: Zack"));
+  }
+
 }

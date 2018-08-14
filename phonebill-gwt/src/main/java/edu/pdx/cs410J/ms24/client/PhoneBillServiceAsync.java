@@ -1,6 +1,7 @@
 package edu.pdx.cs410J.ms24.client;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import java.util.Date;
 
 /**
  * The client-side interface to the phone bill service
@@ -8,19 +9,17 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 public interface PhoneBillServiceAsync {
 
   /**
-   * Return the current date/time on the server
+   * Returns the a dummy Phone Bill
    */
-  void getPhoneBill(AsyncCallback<PhoneBill> async);
+  void addPhoneCall(String PhoneBillInfo[], Boolean print, AsyncCallback<String> async);
 
   /**
-   * Always throws an exception so that we can see how to handle uncaught
-   * exceptions in GWT.
+   * Always throws an undeclared exception so that we can see GWT handles it.
    */
-  void throwUndeclaredException(AsyncCallback<Void> async);
+  void searchPhoneCalls(String customer, Date start, Date end, AsyncCallback<String> async);
 
   /**
    * Always throws a declared exception so that we can see GWT handles it.
    */
-  void throwDeclaredException(AsyncCallback<Void> async);
-
+  void prettyPrint(String customer, AsyncCallback<String> async);
 }
