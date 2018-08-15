@@ -298,7 +298,7 @@ public class PhoneBillGwt implements EntryPoint {
     page.add(printAddedPhoneCall);
     page.add(addCallButton());
 
-    addPage = phoneBillButtonsAndPanels.createHidableTextArea("",.97,.03, null);
+    addPage = phoneBillButtonsAndPanels.createHidableTextArea("",.97,.06, null);
     addPage.setVisible(false);
 
     page.add(addPage);
