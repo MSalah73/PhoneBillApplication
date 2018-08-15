@@ -270,7 +270,7 @@ public class PhoneBillGwt implements EntryPoint {
     addMenu = phoneBillButtonsAndPanels.createHelpMenu();
     page.add(addMenu);
     page.setSpacing(8);
-    page.add(phoneBillButtonsAndPanels.createTextAreaWithNoBorders(addMessage, .97, .03));
+    page.add(phoneBillButtonsAndPanels.createTextAreaWithNoBorders(addMessage, .97, .06));
 
     HorizontalPanel horizontalPanel;
     VerticalPanel verticalPanelToAdd;
@@ -317,7 +317,7 @@ public class PhoneBillGwt implements EntryPoint {
     searchMenu = phoneBillButtonsAndPanels.createHelpMenu();
     page.add(searchMenu);
     page.setSpacing(8);
-    page.add(phoneBillButtonsAndPanels.createTextAreaWithNoBorders(searchMessage, .97, .03));
+    page.add(phoneBillButtonsAndPanels.createTextAreaWithNoBorders(searchMessage, .97, .06));
 
     HorizontalPanel horizontalPanel;
     VerticalPanel verticalPanelToAdd;
@@ -360,7 +360,7 @@ public class PhoneBillGwt implements EntryPoint {
     prettyMenu = phoneBillButtonsAndPanels.createHelpMenu();
     page.add(prettyMenu);
     page.setSpacing(8);
-    page.add(phoneBillButtonsAndPanels.createTextAreaWithNoBorders(prettyMessage, .97, .03));
+    page.add(phoneBillButtonsAndPanels.createTextAreaWithNoBorders(prettyMessage, .97, .06));
 
     Label label = phoneBillButtonsAndPanels.labelSetup("Customer's Name: ");
     label.getElement().getStyle().setPaddingRight(50,Unit.PX);
