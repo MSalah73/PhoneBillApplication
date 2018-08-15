@@ -5,23 +5,23 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 import java.util.Date;
 
 /**
- * A GWT remote service that returns a dummy Phone Bill
+ * A GWT remote service that returns a string message
  */
 @RemoteServiceRelativePath("phoneBill")
 public interface PhoneBillService extends RemoteService {
 
   /**
-   * Returns the a dummy Phone Bill
+   * Return a String message about the added Phone call
    */
   String addPhoneCall(String PhoneBillInfo[], Boolean print) throws Throwable;
 
   /**
-   * Always throws an undeclared exception so that we can see GWT handles it.
+   * Return a String that contain the pretty printed phone calls
    */
   String searchPhoneCalls(String customer,Date start, Date end) throws Throwable;
 
   /**
-   * Always throws a declared exception so that we can see GWT handles it.
+   * Return a String that contain the pretty printed phone bill
    */
   String prettyPrint(String customer) throws Throwable;
 

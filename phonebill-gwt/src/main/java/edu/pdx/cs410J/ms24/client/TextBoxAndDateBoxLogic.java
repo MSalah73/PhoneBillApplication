@@ -14,6 +14,15 @@ import com.google.gwt.user.datepicker.client.DateBox;
 import com.google.gwt.user.datepicker.client.DateBox.DefaultFormat;
 
 public class TextBoxAndDateBoxLogic {
+    /**
+   * The logic to format the date box and user-friendly error message
+   * @param dateBox
+   * This box which will add the logic to
+   * @param textArea
+   * contains the user-friendly messages
+   * @return
+   * return the modified datebox
+   */
  DateBox setDateBoxSettings(DateBox dateBox, TextArea textArea, final String placeHolder) {
     String regex = "^((|(0?[1-9]|1?[012])|"
         + "((02/(|0?[1-9]|1|1\\d|2|2[0-8]))|(0[13578]|1|1[02])/(|0?[1-9]|[12]|[12]\\d|3|3[01])|(0[469]|11)/(|0?[1-9]|[12]|[12]\\d|30?))"
@@ -89,6 +98,15 @@ public class TextBoxAndDateBoxLogic {
     });
     return dateBox;
   }
+    /**
+   * The logic to format the phone number box and user-friendly error message
+   * @param textBox
+   * This box which will add the logic to
+   * @param textArea
+   * contains the user-friendly messages
+   * @return
+   * return the modified textbox
+   */
   TextBox setPhoneNumberBoxSettings(TextBox textBox, TextArea textArea) {
     textBox.addFocusHandler(new FocusHandler() {
       @Override
@@ -146,6 +164,15 @@ public class TextBoxAndDateBoxLogic {
     return textBox;
   }
 
+  /**
+   * The logic to format the Time box and user-friendly error message
+   * @param textBox
+   * This box which will add the logic to
+   * @param textArea
+   * contains the user-friendly messages
+   * @return
+   * return the modified textbox
+   */
   TextBox setHourMinuteBoxSettings(TextBox textBox, TextArea textArea) {
     String regex = "^(|0[1-9]?|[1-9]?|1[0-2]?)(:[0-5]?|:[0-5]\\d)?$";
 

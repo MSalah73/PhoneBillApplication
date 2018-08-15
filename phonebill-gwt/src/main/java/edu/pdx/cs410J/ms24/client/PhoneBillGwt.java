@@ -25,6 +25,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.ValueBoxBase.TextAlignment;
+import com.google.gwt.user.client.ui.ValueListBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.datepicker.client.DateBox;
 
@@ -86,6 +87,22 @@ public class PhoneBillGwt implements EntryPoint {
   DecoratorPanel  addPage;           DecoratorPanel  searchPage;
   DecoratorPanel  prettyPage;
 
+  /**
+   * menu
+   */
+  VerticalPanel   addMenu;           VerticalPanel   searchMenu;
+  VerticalPanel   prettyMenu;
+
+  /**
+   * Page messages
+   */
+  String addMessage = "Welcome to the \"Add Phone Call\" facility.\n"
+      + "This allows you to add as many phone calls as you want for any user."
+      + "For new users, a new account will be generated for them adn adds the phone call to their account.";
+  String searchMessage = "Welcome to the \"Search Phone Calls\" facility.\n"
+      + "This allows to search a particular phone bill within the requested start and end date and time";
+  String prettyMessage = "Welcome to the \"Pretty Print Phone Bill\" facility.\n"
+      + "This allows to display a beautiful and user-friendly phone bill for a particular customer.";
   public PhoneBillGwt() {
     this(new Alerter() {
       @Override
@@ -130,9 +147,9 @@ public class PhoneBillGwt implements EntryPoint {
     return throwable;
   }
 
-  private void addWidgets(VerticalPanel panel) {
-  }
-
+  /**
+   * This method communicate with the server to add a phone call
+   */
   private void  addPhoneCall(){
     final String[] phoneCallInfo = new String[]{addCustomer.getText(), addCaller.getText(), addCallee.getText(),
         addStartDate.getTextBox().getText() ,addStartTime.getText(),addStartMarker.getText(),
@@ -151,6 +168,10 @@ public class PhoneBillGwt implements EntryPoint {
         });
     addPage.setVisible(true);
   }
+
+  /**
+   * This method communicate with the server to search phone calls
+   */
   private void searchPhoneCalls(){
     phoneBillService.searchPhoneCalls(searchCustomer.getText(), searchStartDate.getValue(), searchEndDate.getValue(),
         new AsyncCallback<String>() {
@@ -166,6 +187,10 @@ public class PhoneBillGwt implements EntryPoint {
     searchPage.setVisible(true);
 
   }
+
+  /**
+   * This method communicate with the server to pretty print a phone bill
+   */
   private void prettyPrintPhoneBill(){
     phoneBillService.prettyPrint(printCustomer.getText(),new AsyncCallback<String>() {
       @Override
@@ -194,6 +219,10 @@ public class PhoneBillGwt implements EntryPoint {
       }
     });
   }
+
+  /**
+   * This method create the tabs "Pages" and populated them with widgets so the user can interact with.
+   */
   private void createTabPages(){
     errorLog = new DialogBox();
     errorLog.setAnimationEnabled(true);
@@ -229,11 +258,17 @@ public class PhoneBillGwt implements EntryPoint {
     rootPanel.get().add(tabPanel);
   }
 
+  /**
+   * This create and populate the addPhoneBill Page with widgets
+   * @return
+   * Vertical panel -- "Page"
+   */
   private VerticalPanel createAddPhoneCallPage(){
     VerticalPanel page = new VerticalPanel();
-    page.add(phoneBillButtonsAndPanels.createHelpMenu());
+    addMenu = phoneBillButtonsAndPanels.createHelpMenu();
+    page.add(addMenu);
     page.setSpacing(8);
-    page.add(phoneBillButtonsAndPanels.createTextAreaWithNoBorders("herr\na\na\na\na\na\na\na", .97, .06));
+    page.add(phoneBillButtonsAndPanels.createTextAreaWithNoBorders(addMessage, .97, .03));
 
     HorizontalPanel horizontalPanel;
     VerticalPanel verticalPanelToAdd;
@@ -263,18 +298,24 @@ public class PhoneBillGwt implements EntryPoint {
     page.add(printAddedPhoneCall);
     page.add(addCallButton());
 
-    addPage = phoneBillButtonsAndPanels.createHidableTextArea("",.97,.10, null);
+    addPage = phoneBillButtonsAndPanels.createHidableTextArea("",.97,.03, null);
     addPage.setVisible(false);
 
     page.add(addPage);
 
     return page;
   }
+  /**
+   * This create and populate the searchPhoneCalls Page with widgets
+   * @return
+   * Vertical panel -- "Page"
+   */
   private VerticalPanel createSearchPage(){
     VerticalPanel page = new VerticalPanel();
-    page.add(phoneBillButtonsAndPanels.createHelpMenu());
+    searchMenu = phoneBillButtonsAndPanels.createHelpMenu();
+    page.add(searchMenu);
     page.setSpacing(8);
-    page.add(phoneBillButtonsAndPanels.createTextAreaWithNoBorders("herr\na\na\na\na\na\na\na", .97, .06));
+    page.add(phoneBillButtonsAndPanels.createTextAreaWithNoBorders(searchMessage, .97, .03));
 
     HorizontalPanel horizontalPanel;
     VerticalPanel verticalPanelToAdd;
@@ -307,11 +348,17 @@ public class PhoneBillGwt implements EntryPoint {
 
     return page;
   }
+    /**
+   * This create and populate the prettyPrintPhoneBill Page with widgets
+   * @return
+   * Vertical panel -- "Page"
+   */
   private VerticalPanel createPrettyPrintPage(){
     VerticalPanel page = new VerticalPanel();
-    page.add(phoneBillButtonsAndPanels.createHelpMenu());
+    prettyMenu = phoneBillButtonsAndPanels.createHelpMenu();
+    page.add(prettyMenu);
     page.setSpacing(8);
-    page.add(phoneBillButtonsAndPanels.createTextAreaWithNoBorders("herr\na\na\na\na\na\na\na", .97, .06));
+    page.add(phoneBillButtonsAndPanels.createTextAreaWithNoBorders(prettyMessage, .97, .03));
 
     Label label = phoneBillButtonsAndPanels.labelSetup("Customer's Name: ");
     label.getElement().getStyle().setPaddingRight(50,Unit.PX);
@@ -339,6 +386,11 @@ public class PhoneBillGwt implements EntryPoint {
 
     return page;
   }
+
+  /**
+   * This methods add logic to the button for the addPhoneCall Page
+   * @return Button
+   */
   private Button addCallButton() {
     Button button = new Button();
     button.setHTML("Submit");
@@ -413,12 +465,18 @@ public class PhoneBillGwt implements EntryPoint {
           errorLog.setText(isRed?"Fields in red are either missing or wrong":log);
           errorLog.center();
           errorLog.show();
-        }else
+        }else {
+          addMenu.getWidget(1).setVisible(false);
           addPhoneCall();
+        }
       }
     });
     return button;
   }
+  /**
+   * This methods add logic to the button for the searchPhoneCalls Page
+   * @return Button
+   */
   private Button addSearchButton(){
     Button button = new Button();
     button.setHTML("Submit");
@@ -481,12 +539,19 @@ public class PhoneBillGwt implements EntryPoint {
           errorLog.setText(isRed?"Fields in red are either missing or wrong":log);
           errorLog.center();
           errorLog.show();
-        }else
+        }else {
+          searchMenu.getWidget(1).setVisible(false);
           searchPhoneCalls();
+        }
       }
     });
     return button;
   }
+
+  /**
+   * This methods adds logic to the prettyPrintPhoneBill Page
+   * @return button
+   */
   private Button addPrettyButton(){
     Button button = new Button();
     button.setHTML("Submit");
@@ -506,12 +571,19 @@ public class PhoneBillGwt implements EntryPoint {
           errorLog.setText(isRed?"Fields in red are either missing or wrong":log);
           errorLog.center();
           errorLog.show();
-        }else
+        }else {
+          prettyMenu.getWidget(1).setVisible(false);
           prettyPrintPhoneBill();
+        }
       }
     });
     return button;
   }
+
+  /**
+   * This methods create a horizontal panel that contains the caller and callee widgets to add to Pages
+   * @return Horizontal Panel
+   */
   private HorizontalPanel callerCalleePanel(){
     HorizontalPanel horizontalPanel = new HorizontalPanel();
     VerticalPanel verticalPanel;
@@ -531,6 +603,10 @@ public class PhoneBillGwt implements EntryPoint {
     horizontalPanel.add(verticalPanel);
     return horizontalPanel;
   }
+    /**
+   * This methods create a vertical panel that contains the Date and Time widgets to add to Pages
+   * @return Vertical Panel
+   */
   private VerticalPanel dateAndTimePanel(PageType pageType){
     HorizontalPanel start = new HorizontalPanel();
     HorizontalPanel end = new HorizontalPanel();
@@ -604,6 +680,10 @@ public class PhoneBillGwt implements EntryPoint {
     toReturn.add(end);
     return toReturn;
   }
+
+  /**
+   * This method reset the TextBoxes and TextAreas -- its used when changes tabs "Pages"
+   */
   private void dateReset(){
     addCustomer.setText("");
     addCustomer.getElement().getStyle().clearBackgroundColor();
@@ -655,6 +735,10 @@ public class PhoneBillGwt implements EntryPoint {
     addPage.setVisible(false);
     searchPage.setVisible(false);
     prettyPage.setVisible(false);
+
+    addMenu.getWidget(1).setVisible(false);
+    searchMenu.getWidget(1).setVisible(false);
+    prettyMenu.getWidget(1).setVisible(false);
 
   }
   private void setUpUncaughtExceptionHandler() {
