@@ -18,7 +18,7 @@ public interface PhoneBillService extends RemoteService {
   /**
    * Return a String that contain the pretty printed phone calls
    */
-  String searchPhoneCalls(String customer,Date start, Date end) throws Throwable;
+  String searchPhoneCalls(String customer,String start, String end) throws Throwable;
 
   /**
    * Return a String that contain the pretty printed phone bill

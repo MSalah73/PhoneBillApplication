@@ -1,11 +1,8 @@
 package edu.pdx.cs410J.ms24.server;
 
-import edu.pdx.cs410J.ms24.client.PhoneBill;
-import java.util.Date;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 
-import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 @FixMethodOrder()
 public class PhoneBillServiceImplTest {
@@ -28,8 +25,8 @@ public class PhoneBillServiceImplTest {
   }
   @Test
   public void searchCalls() throws Throwable {
-    Date before = new Date("11/11/1111 11:11 am");
-    Date after = new Date("11/11/1111 11:11 pm");
+    String before = "11/11/1111 11:11 am";
+    String after = "11/11/1111 11:11 pm";
     String s = service.searchPhoneCalls("Zack",before,after);
     assertThat("It should find the redefined phone call",s.contains("Customer: Zack"));
   }

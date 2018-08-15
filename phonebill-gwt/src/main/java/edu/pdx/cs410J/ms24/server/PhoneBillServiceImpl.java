@@ -66,11 +66,11 @@ public class PhoneBillServiceImpl extends RemoteServiceServlet implements PhoneB
    * To inform the client side with a message to catch onFailure methods
    */
   @Override
-  public String searchPhoneCalls(String customer, Date start, Date end) throws Throwable{
+  public String searchPhoneCalls(String customer, String start, String end) throws Throwable{
     PhoneBill phonebill = phonebills.get(customer);
     if (phonebill == null)
       throw new Throwable("Requested customer \""+customer+"\" does not have a registered Phone Bill");
-    return phonebill.searchPhoneCalls(start,end);
+    return phonebill.searchPhoneCalls(new Date(start),new Date(end));
   }
   /**
    * This method search the HashMap dict to find the customer's phoneBill and pretty printed to

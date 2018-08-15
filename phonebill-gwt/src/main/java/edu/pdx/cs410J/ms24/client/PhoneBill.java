@@ -108,14 +108,14 @@ public class PhoneBill extends AbstractPhoneBill<PhoneCall> {
    * If start date is after end date
    */
   public final String searchPhoneCalls(Date startTime, Date endTime)
-      throws Exception {
+      throws Throwable {
     PhoneBill bill = new PhoneBill(this.customer);
     String to_return = null;
     PrettyPrinter prettyPrinter = new PrettyPrinter();
     var start = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT).format(startTime);
     var end = DateFormat.getDateTimeInstance(DateFormat.SHORT,DateFormat.SHORT).format(endTime);
     if(startTime.after(endTime))
-      throw new Exception("Start date: "+start+" can not be after end date: "+end);
+      throw new Throwable("Start date: "+start+" can not be after end date: "+end);
 
     for(PhoneCall c: phoneCalls){
       var date = c.getStartTime();

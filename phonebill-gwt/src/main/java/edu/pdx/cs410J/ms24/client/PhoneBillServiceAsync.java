@@ -16,7 +16,7 @@ public interface PhoneBillServiceAsync {
   /**
    * Return a String that contain the pretty printed phone calls
    */
-  void searchPhoneCalls(String customer, Date start, Date end, AsyncCallback<String> async);
+  void searchPhoneCalls(String customer, String start, String end, AsyncCallback<String> async);
 
   /**
    * Return a String that contain the pretty printed phone bill

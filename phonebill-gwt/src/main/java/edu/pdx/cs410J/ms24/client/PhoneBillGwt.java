@@ -30,6 +30,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.datepicker.client.DateBox;
 
 import edu.pdx.cs410J.ms24.client.PhoneBillButtonsAndPanels.BoxSetting;
+import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 /**
@@ -173,8 +174,9 @@ public class PhoneBillGwt implements EntryPoint {
    * This method communicate with the server to search phone calls
    */
   private void searchPhoneCalls(){
-    phoneBillService.searchPhoneCalls(searchCustomer.getText(), searchStartDate.getValue(), searchEndDate.getValue(),
-        new AsyncCallback<String>() {
+    String start = searchStartDate.getTextBox().getText()+" "+searchStartTime.getText()+" "+searchStartMarker.getText();
+    String end = searchEndDate.getTextBox().getText()+" "+searchEndTime.getText()+" "+searchEndMarker.getText();
+    phoneBillService.searchPhoneCalls(searchCustomer.getText(), start,end, new AsyncCallback<String>() {
           @Override
           public void onFailure(Throwable throwable) {
             ((TextArea)((VerticalPanel) searchPage.getWidget()).getWidget(0)).setText(throwable.getMessage());
